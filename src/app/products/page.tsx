@@ -104,7 +104,7 @@ const ProductsPage = () => {
         <div className="flex justify-center mt-6 mb-8">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-3 bg-pink-500 text-white rounded-md hover:bg-purple-600 transition" >
+            className="px-4 py-2 bg-pink-500 text-white hover:bg-purple-600 transition" >
             Load More
           </button>
         </div>

@@ -12,7 +12,7 @@ const CartPage: React.FC = () => {
   const [editQuantities, setEditQuantities] = useState<{ [id: string]: number }>({});
   const [shippingMethod, setShippingMethod] = useState<string>("Standard");
   const [shippingCost, setShippingCost] = useState<number>(5); // Default shipping cost for Standard
-  const [promoCode, setPromoCode] = useState<string>("");
+  const [promoCode, setPromoCode] = useState<string>(""); 
   const [discount, setDiscount] = useState<number>(0);
 
   const handleIncrement = (id: string) => {
@@ -33,21 +33,11 @@ const CartPage: React.FC = () => {
     }
   };
 
-  // const totalCost = cart.reduce((total, item) => {
-  //   const price = item.price || 0;
-  //   const quantity = editQuantities[item._id] || item.quantity || 0;
-  //   return total + price * quantity;
-  // }, 0);
-
   const totalCost = cart.reduce((total, item) => {
     const price = item.price || 0;
-    const quantity = editQuantities[item._id] || item.quantity || 1;
+    const quantity = editQuantities[item._id!] || item.quantity || 1;
     return total + price * quantity;
   }, 0);
-  
-  console.log("Total Cost:", totalCost); // Debug the calculation
-  
-  
 
   const handleShippingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setShippingMethod(event.target.value);
@@ -65,144 +55,345 @@ const CartPage: React.FC = () => {
 
   const finalCost = totalCost + shippingCost - discount;
 
-  console.log(cart)
   return (
     <div>
       <Breadcrumb />
       <div className="container mx-auto p-6 flex justify-center items-start gap-10 max-w-7xl px-20">
-  {/* Cart table */}
-  {cart.length === 0 ? (
-    <div className="text-center mt-16">
-      <FiShoppingCart size={64} className="text-gray-400 mx-auto" />
-      <p className="text-gray-600 mt-4 text-lg">No items in your cart yet.</p>
-    </div>
-  ) : (
-    <div className="w-2/3">
-      <table className="min-w-full table-auto mb-4">
-        <thead className="bg-gray-100 text-[#1D3178]">
-          <tr>
-            <th className="px-4 py-2 text-left">Product</th>
-            <th className="px-4 py-2 text-left">Name</th>
-            <th className="px-4 py-2 text-left">Quantity</th>
-            <th className="px-4 py-2 text-left">Price</th>
-            <th className="px-4 py-2 text-left">Total</th>
-            <th className="px-4 py-2 text-left">Remove</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cart.map((item) =>
-            item._id !== undefined ? (
-              
-              <tr key={item._id} className="border-b">
-                <td className="px-4 py-2 flex items-center gap-4">
-                  <Image
-                    // src={product.imageUrl}
-                    src={item.imageUrl || "/about.png"}
-                    alt={item.name}
-                    width={64}
-                    height={64}
-                    className="rounded"
-                  />
-                </td>
-                <td className="px-4 py-2 font-semibold">{item.name}</td>
-                <td className="px-4 py-2">
-                  <div className="flex items-center gap-2 ml-2">
-                    <button
-                      className="text-red-600 text-3xl font-extrabold rounded hover:text-red-700 transition"
-                      onClick={() => handleDecrement(item._id!)}
-                    >
-                      -
-                    </button>
-                    <span>{editQuantities[item._id] || item.quantity || 1}</span>
-                    <button
-                      className="text-green-600 text-2xl font-extrabold rounded hover:text-green-700 transition"
-                      onClick={() => handleIncrement(item._id!)}
-                    >
-                      +
-                    </button>
-                  </div>
-                </td>
-                <td className="px-4 py-2 text-gray-600">${item.price}</td>
-                <td className="px-4 py-2 font-semibold">
-                  ${(
-                    item.price * (editQuantities[item._id] || item.quantity || 0)
-                  ).toFixed(2)}
-                </td>
+        {/* Cart table */}
+        {cart.length === 0 ? (
+          <div className="text-center mt-16">
+            <FiShoppingCart size={64} className="text-gray-400 mx-auto" />
+            <p className="text-gray-600 mt-4 text-lg">No items in your cart yet.</p>
+          </div>
+        ) : (
+          <div className="w-2/3">
+            <table className="min-w-full table-auto mb-4">
+              <thead className="bg-gray-100 text-[#1D3178]">
+                <tr>
+                  <th className="px-4 py-2 text-left">Product</th>
+                  <th className="px-4 py-2 text-left">Name</th>
+                  <th className="px-4 py-2 text-left">Quantity</th>
+                  <th className="px-4 py-2 text-left">Price</th>
+                  <th className="px-4 py-2 text-left">Total</th>
+                  <th className="px-4 py-2 text-left">Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cart.map((item) => 
+                  item._id ? (
+                    <tr key={item._id} className="border-b">
+                      <td className="px-4 py-2 flex items-center gap-4">
+                        <Image
+                          src={item.imageUrl || "/about.png"}
+                          alt={item.name}
+                          width={64}
+                          height={64}
+                          className="rounded"
+                        />
+                      </td>
+                      <td className="px-4 py-2 font-semibold">{item.name}</td>
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-2 ml-2">
+                          <button
+                            className="text-red-600 text-3xl font-extrabold rounded hover:text-red-700 transition"
+                            onClick={() => handleDecrement(item._id!)}
+                          >
+                            -
+                          </button>
+                          <span>{editQuantities[item._id] || item.quantity || 1}</span>
+                          <button
+                            className="text-green-600 text-2xl font-extrabold rounded hover:text-green-700 transition"
+                            onClick={() => handleIncrement(item._id!)}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">${item.price}</td>
+                      <td className="px-4 py-2 font-semibold">
+                        ${(
+                          item.price! * (editQuantities[item._id] || item.quantity || 1)
+                        ).toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2">
+                        <button
+                          onClick={() => removeFromCart(item._id!)}
+                          className="text-red-600 hover:text-red-800 font-semibold transition duration-300 ml-6"
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ) : null
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {/* Totals section */}
+        {cart.length > 0 && (
+          <div className="lg:w-1/3 p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-bold mb-4 text-center text-[#1D3178]">Cart Totals</h3>
+            <div className="bg-[#F4F4FC] p-4 rounded mb-4">
+              <div className="mb-2 flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
+                <span>Subtotal:</span>
+                <span>${totalCost.toFixed(2)}</span>
+              </div>
+              <div className="mb-2 flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
+                <span>Promo Discount:</span>
+                <span>${discount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
+                <span>Total:</span>
+                <span>${finalCost.toFixed(2)}</span>
+              </div>
+            </div>
 
-                <td className="px-4 py-2">
-                  <button
-                    onClick={() => removeFromCart(item._id!)}
-                    className="text-red-600 hover:text-red-800 font-semibold transition duration-300 ml-6"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ) : null
-          )}
-        </tbody>
-      </table>
-    </div>
-  )}
-  {/* Totals section */}
-  {cart.length > 0 && (
-    <div className="lg:w-1/3 p-4 rounded-lg shadow-md">
-      <h3 className="text-xl font-bold mb-4 text-center text-[#1D3178]">Cart Totals</h3>
-      <div className="bg-[#F4F4FC] p-4 rounded mb-4">
-        <div className="mb-2 flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
-          <span>Subtotal:</span>
-          <span>${totalCost.toFixed(2)}</span>
-        </div>
-        <div className="mb-2 flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
-          <span>Promo Discount:</span>
-          <span>${discount.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
-          <span>Total:</span>
-          <span>${finalCost.toFixed(2)}</span>
-        </div>
+            <h4 className="text-xl font-bold mb-4 text-center text-[#1D3178]">Calculate Shipping</h4>
+            <div className="bg-[#F4F4FC] p-4 rounded">
+              <select
+                value={shippingMethod}
+                onChange={handleShippingChange}
+                className="bg-[#F4F4FC] border-gray-300 p-2 rounded w-full mb-4"
+              >
+                <option value="Standard">Standard - $5</option>
+                <option value="Express">Express - $20</option>
+              </select>
+
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="Promo Code SAVE10"
+                className="w-full bg-[#F4F4FC] border-gray-300 p-2 rounded mb-4"
+              />
+              <button
+                onClick={handlePromoCodeApply}
+                className="bg-pink-500 hover:bg-purple-600 w-full text-white px-4 py-2 rounded mb-4"
+              >
+                Apply Promo Code
+              </button>
+              <Link href="/checkout">
+                <button className="bg-green-500 hover:bg-pink-500 w-full text-white px-4 py-2 rounded">
+                  Proceed to Checkout
+                </button>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
-
-      <h4 className="text-xl font-bold mb-4 text-center text-[#1D3178]">Calculate Shipping</h4>
-      <div className="bg-[#F4F4FC] p-4 rounded">
-        <select
-          value={shippingMethod}
-          onChange={handleShippingChange}
-          className="bg-[#F4F4FC] border-gray-300 p-2 rounded w-full mb-4"
-        >
-          <option value="Standard">Standard - $5</option>
-          <option value="Express">Express - $20</option>
-        </select>
-
-        <input
-          type="text"
-          value={promoCode}
-          onChange={(e) => setPromoCode(e.target.value)}
-          placeholder="Promo Code SAVE10"
-          className="w-full bg-[#F4F4FC] border-gray-300 p-2 rounded mb-4"
-        />
-        <button
-          onClick={handlePromoCodeApply}
-          className="bg-pink-500 hover:bg-purple-600 w-full text-white px-4 py-2 rounded mb-4"
-        >
-          Apply Promo Code
-        </button>
-        <Link href="/checkout">
-        <button className="bg-green-500 hover:bg-pink-500 w-full text-white px-4 py-2 rounded">
-          Proceed to Checkout
-        </button>
-        </Link>
-      </div>
     </div>
-  )}
-</div>
-
-      </div>
-    // </div>
   );
 };
 
 export default CartPage;
+
+
+// "use client";
+// import React, { useState } from "react";
+// import { useCart } from "../context/CartContext";
+// import { FaTrash } from "react-icons/fa";
+// import Image from "next/image";
+// import Breadcrumb from "@/components/BreadCrumb";
+// import { FiShoppingCart } from "react-icons/fi";
+// import Link from "next/link";
+
+// const CartPage: React.FC = () => {
+//   const { cart, removeFromCart, updateQuantity } = useCart();
+//   const [editQuantities, setEditQuantities] = useState<{ [id: string]: number }>({});
+//   const [shippingMethod, setShippingMethod] = useState<string>("Standard");
+//   const [shippingCost, setShippingCost] = useState<number>(5); // Default shipping cost for Standard
+//   const [promoCode, setPromoCode] = useState<string>("");
+//   const [discount, setDiscount] = useState<number>(0);
+
+//   const handleIncrement = (id: string) => {
+//     setEditQuantities((prev) => ({
+//       ...prev,
+//       [id]: (prev[id] || 1) + 1,
+//     }));
+//     updateQuantity(id, (editQuantities[id] || 1) + 1);
+//   };
+
+//   const handleDecrement = (id: string) => {
+//     if (editQuantities[id] > 1) {
+//       setEditQuantities((prev) => ({
+//         ...prev,
+//         [id]: (prev[id] || 1) - 1,
+//       }));
+//       updateQuantity(id, (editQuantities[id] || 1) - 1);
+//     }
+//   };
+
+//   // const totalCost = cart.reduce((total, item) => {
+//   //   const price = item.price || 0;
+//   //   const quantity = editQuantities[item._id] || item.quantity || 0;
+//   //   return total + price * quantity;
+//   // }, 0);
+
+//   const totalCost = cart.reduce((total, item) => {
+//     const price = item.price || 0;
+//     const quantity = editQuantities[item._id!] || item.quantity || 1;
+//     return total + price * quantity;
+//   }, 0);
+  
+//   console.log("Total Cost:", totalCost); // Debug the calculation
+  
+  
+
+//   const handleShippingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+//     setShippingMethod(event.target.value);
+//     setShippingCost(event.target.value === "Express" ? 20 : 5); // Set cost based on method
+//   };
+
+//   const handlePromoCodeApply = () => {
+//     if (promoCode === "SAVE10") {
+//       setDiscount(totalCost * 0.1); // 10% discount
+//     } else {
+//       setDiscount(0); // Invalid promo code
+//       alert("Invalid promo code!");
+//     }
+//   };
+
+//   const finalCost = totalCost + shippingCost - discount;
+
+//   console.log(cart)
+//   return (
+//     <div>
+//       <Breadcrumb />
+//       <div className="container mx-auto p-6 flex justify-center items-start gap-10 max-w-7xl px-20">
+//   {/* Cart table */}
+//   {cart.length === 0 ? (
+//     <div className="text-center mt-16">
+//       <FiShoppingCart size={64} className="text-gray-400 mx-auto" />
+//       <p className="text-gray-600 mt-4 text-lg">No items in your cart yet.</p>
+//     </div>
+//   ) : (
+//     <div className="w-2/3">
+//       <table className="min-w-full table-auto mb-4">
+//         <thead className="bg-gray-100 text-[#1D3178]">
+//           <tr>
+//             <th className="px-4 py-2 text-left">Product</th>
+//             <th className="px-4 py-2 text-left">Name</th>
+//             <th className="px-4 py-2 text-left">Quantity</th>
+//             <th className="px-4 py-2 text-left">Price</th>
+//             <th className="px-4 py-2 text-left">Total</th>
+//             <th className="px-4 py-2 text-left">Remove</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {cart.map((item) =>
+//             item._id !== undefined ? (
+              
+//               <tr key={item._id} className="border-b">
+//                 <td className="px-4 py-2 flex items-center gap-4">
+//                   <Image
+//                     // src={product.imageUrl}
+//                     src={item.imageUrl || "/about.png"}
+//                     alt={item.name}
+//                     width={64}
+//                     height={64}
+//                     className="rounded"
+//                   />
+//                 </td>
+//                 <td className="px-4 py-2 font-semibold">{item.name}</td>
+//                 <td className="px-4 py-2">
+//                   <div className="flex items-center gap-2 ml-2">
+//                     <button
+//                       className="text-red-600 text-3xl font-extrabold rounded hover:text-red-700 transition"
+//                       onClick={() => handleDecrement(item._id!)}
+//                     >
+//                       -
+//                     </button>
+//                     <span>{editQuantities[item._id] || item.quantity || 1}</span>
+//                     <button
+//                       className="text-green-600 text-2xl font-extrabold rounded hover:text-green-700 transition"
+//                       onClick={() => handleIncrement(item._id!)}
+//                     >
+//                       +
+//                     </button>
+//                   </div>
+//                 </td>
+//                 <td className="px-4 py-2 text-gray-600">${item.price}</td>
+//                 <td className="px-4 py-2 font-semibold">
+//                   ${(
+//                     item.price! * (editQuantities[item._id] || item.quantity || 0)
+//                   ).toFixed(2)}
+//                 </td>
+
+//                 <td className="px-4 py-2">
+//                   <button
+//                     onClick={() => removeFromCart(item._id!)}
+//                     className="text-red-600 hover:text-red-800 font-semibold transition duration-300 ml-6"
+//                   >
+//                     <FaTrash />
+//                   </button>
+//                 </td>
+//               </tr>
+//             ) : null
+//           )}
+//         </tbody>
+//       </table>
+//     </div>
+//   )}
+//   {/* Totals section */}
+//   {cart.length > 0 && (
+//     <div className="lg:w-1/3 p-4 rounded-lg shadow-md">
+//       <h3 className="text-xl font-bold mb-4 text-center text-[#1D3178]">Cart Totals</h3>
+//       <div className="bg-[#F4F4FC] p-4 rounded mb-4">
+//         <div className="mb-2 flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
+//           <span>Subtotal:</span>
+//           <span>${totalCost.toFixed(2)}</span>
+//         </div>
+//         <div className="mb-2 flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
+//           <span>Promo Discount:</span>
+//           <span>${discount.toFixed(2)}</span>
+//         </div>
+//         <div className="flex justify-between text-[#1D3178] border-b border-gray-300 pb-2">
+//           <span>Total:</span>
+//           <span>${finalCost.toFixed(2)}</span>
+//         </div>
+//       </div>
+
+//       <h4 className="text-xl font-bold mb-4 text-center text-[#1D3178]">Calculate Shipping</h4>
+//       <div className="bg-[#F4F4FC] p-4 rounded">
+//         <select
+//           value={shippingMethod}
+//           onChange={handleShippingChange}
+//           className="bg-[#F4F4FC] border-gray-300 p-2 rounded w-full mb-4"
+//         >
+//           <option value="Standard">Standard - $5</option>
+//           <option value="Express">Express - $20</option>
+//         </select>
+
+//         <input
+//           type="text"
+//           value={promoCode}
+//           onChange={(e) => setPromoCode(e.target.value)}
+//           placeholder="Promo Code SAVE10"
+//           className="w-full bg-[#F4F4FC] border-gray-300 p-2 rounded mb-4"
+//         />
+//         <button
+//           onClick={handlePromoCodeApply}
+//           className="bg-pink-500 hover:bg-purple-600 w-full text-white px-4 py-2 rounded mb-4"
+//         >
+//           Apply Promo Code
+//         </button>
+//         <Link href="/checkout">
+//         <button className="bg-green-500 hover:bg-pink-500 w-full text-white px-4 py-2 rounded">
+//           Proceed to Checkout
+//         </button>
+//         </Link>
+//       </div>
+//     </div>
+//   )}
+// </div>
+
+//       </div>
+//     // </div>
+//   );
+// };
+
+// export default CartPage;
 
 
 // "use client";

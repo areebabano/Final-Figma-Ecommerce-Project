@@ -83,7 +83,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
         name: product.name,
         description: product.description,
         price: product.price,
-        quantity,
+        quantity,  
       });
       setSuccessMessage("Product added to cart successfully!");
       product.stockLevel -= quantity;  // Reduce stock

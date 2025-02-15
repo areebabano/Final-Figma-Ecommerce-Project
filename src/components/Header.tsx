@@ -10,6 +10,8 @@ import { useCart } from "@/app/context/CartContext";
 import { client } from "@/sanity/lib/client"; // Import Sanity client
 import SearchBar from "./SearchBar";
 import { useRouter } from "next/navigation";
+import { TfiLayoutMenuV } from "react-icons/tfi";
+import { TbMenuDeep } from "react-icons/tb";
 
 
 interface Product {
@@ -107,13 +109,13 @@ const Header = () => {
   return (
     <header className="bg-purple-600 text-white w-full fixed top-0 left-0  z-50">
       {/* Top Section */}
-      <div className="bg-purple-700 px-6 max-w-7xl mx-auto">
-        <div className="px-14 py-2 flex justify-between items-center">
+      <div className="bg-purple-700 sm:px-2 max-w-7xl mx-auto">
+        <div className="mx-4 py-2 sm:px-14 sm:py-2 flex justify-between items-center">
           {/* Left Section */}
           <div className="flex items-center gap-6">
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <FaRegEnvelope />
-              <span className="text-sm hover:font-semibold">mhhasanu@gmail.com</span>
+              <span className="text-xs sm:text-sm hover:font-semibold">mhhasanu@gmail.com</span>
             </div>
             <div className="hidden sm:flex items-center gap-2">
               <MdOutlinePhoneInTalk />
@@ -124,13 +126,13 @@ const Header = () => {
           {/* Right Section */}
           <div className="flex items-center gap-4">
             {/* Language Selector */}
-            <select className="bg-transparent px-2 py-1 rounded text-sm hover:font-semibold">
+            <select className="hidden md:block bg-transparent px-2 py-1 rounded text-sm hover:font-semibold">
               <option className="text-gray-500">English</option>
               <option className="text-gray-500">Urdu</option>
             </select>
 
             {/* Currency Selector */}
-            <select className="bg-transparent px-2 py-1 rounded text-sm hover:font-semibold">
+            <select className="hidden md:block bg-transparent px-2 py-1 rounded text-sm hover:font-semibold">
               <option className="text-gray-500">USD</option>
               <option className="text-gray-500">PKR</option>
             </select>
@@ -146,9 +148,9 @@ const Header = () => {
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="relative hidden sm:flex items-center gap-1 text-sm hover:font-semibold"
+              className="relative sm:flex items-center gap-1 text-sm hover:font-semibold"
             >
-              Wishlist
+              {/* Wishlist */}
               <FaRegHeart size={20} className="hover:font-semibold" />
               <span className="absolute top-[-6px] right-[-6px] bg-red-600 rounded-full w-[14px] h-[14px] text-[10px] text-white flex items-center justify-center">
                 {favourites.length}
@@ -168,19 +170,48 @@ const Header = () => {
 
       {/* Main Navigation Section */}
       <div className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-20 py-3 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-20 sm:py-3 flex justify-between items-center">
           {/* Logo */}
           <div className="text-3xl font-bold text-blue-900">Hekto</div>
 
-          {/* Hamburger Menu Icon (Mobile) */}
-          <div className="sm:hidden flex items-center ml-4">
-            <button onClick={toggleMenu}>
-              <AiOutlineMenu size={25} className="text-blue-900" />
-            </button>
-          </div>
+          {/* Search Bar Section */}
+          <div className="relative flex items-center gap-4">
+          <SearchBar query={query} handleSearch={handleSearch}/>
 
-          {/* Navigation Links */}
-          <nav className="hidden sm:flex space-x-4 text-sm">
+            {/* Display Suggestions */}
+            {/* Display Suggestions */}
+{showSuggestions && query && (
+  <div className="absolute top-full left-0 right-0 bg-white shadow-lg mt-1 max-h-60 overflow-y-auto z-10 rounded-md">
+    <ul>
+      {filteredProducts.map((product) => (
+        <li
+          key={product._id}
+          className="p-2 bg-white text-black hover:bg-gray-100 hover:text-pink-500 cursor-pointer"
+        >
+          <Link
+  href={`/search-result?id=${product._id}`}
+  className="flex items-center gap-4 w-full text-black hover:text-pink-500"
+  onClick={() => handleSuggestionClick(product._id)}
+>
+  <img
+    src={product.imageUrl}
+    alt={product.name}
+    className="w-14 h-14 object-cover rounded-md"
+  />
+  <span className="text-xs">{product.name}</span>
+</Link>
+
+        </li>
+      ))}
+      {filteredProducts.length === 0 && (
+        <li className="p-2 text-red-500">No products found</li>
+      )}
+    </ul>
+  </div>
+)}
+
+{/* Navigation Links */}
+<nav className="hidden sm:flex space-x-4 text-sm">
             <Link
               href="/"
               className="text-red-500 font-medium hover:text-pink-500 transition duration-200"
@@ -226,43 +257,12 @@ const Header = () => {
             </Link>
             
           </nav>
-
-          {/* Search Bar Section */}
-          <div className="relative flex items-center gap-4 sm:w-64 w-full ml-4">
-          <SearchBar query={query} handleSearch={handleSearch}/>
-
-            {/* Display Suggestions */}
-            {/* Display Suggestions */}
-{showSuggestions && query && (
-  <div className="absolute top-full left-0 right-0 bg-white shadow-lg mt-1 max-h-60 overflow-y-auto z-10 rounded-md">
-    <ul>
-      {filteredProducts.map((product) => (
-        <li
-          key={product._id}
-          className="p-2 bg-white text-black hover:bg-gray-100 hover:text-pink-500 cursor-pointer"
-        >
-          <Link
-  href={`/search-result?id=${product._id}`}
-  className="flex items-center gap-4 w-full text-black hover:text-pink-500"
-  onClick={() => handleSuggestionClick(product._id)}
->
-  <img
-    src={product.imageUrl}
-    alt={product.name}
-    className="w-14 h-14 object-cover rounded-md"
-  />
-  <span className="text-xs">{product.name}</span>
-</Link>
-
-        </li>
-      ))}
-      {filteredProducts.length === 0 && (
-        <li className="p-2 text-red-500">No products found</li>
-      )}
-    </ul>
-  </div>
-)}
-
+          </div>
+          {/* Hamburger Menu Icon (Mobile) */}
+          <div className="sm:hidden flex items-center ml-4">
+            <button onClick={toggleMenu}>
+              <TbMenuDeep size={30} className="text-blue-900 hover:text-pink-600" />
+            </button>
           </div>
         </div>
       </div>
@@ -331,71 +331,3 @@ export default Header;
 
 
 
-
-
-// import { FaRegUser, FaRegHeart, FaRegEnvelope } from "react-icons/fa";
-// import { FiShoppingCart } from "react-icons/fi";
-// import { MdOutlinePhoneInTalk } from "react-icons/md";
-
-// const Header = () => {
-//   return (
-//     <header className="bg-purple-600 text-white px-6">
-//       <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
-//         {/* Left Section */}
-//         <div className="flex items-center gap-6">
-//           <div className="hidden sm:flex items-center gap-2">
-//             <FaRegEnvelope />
-//             <span className="text-sm">mhhasanu@gmail.com</span>
-//           </div>
-//           <div className="hidden sm:flex items-center gap-2">
-//             <MdOutlinePhoneInTalk />
-//             <span className="text-sm">(12345)67890</span>
-//           </div>
-//         </div>
-
-//         {/* Right Section */}
-//         <div className="flex items-center gap-4">
-//           {/* Language Selector */}
-//           <select className="bg-transparent px-2 py-1 rounded text-sm">
-//             <option>English</option>
-//             <option>Urdu</option>
-//           </select>
-
-//           {/* Currency Selector */}
-//           <select className="bg-transparent px-2 py-1 rounded text-sm">
-//             <option>USD</option>
-//             <option>PKR</option>
-//           </select>
-
-//           {/* Login */}
-//           <a
-//             href="#"
-//             className="hidden sm:flex items-center gap-1 text-sm hover:text-gray-300"
-//           >
-//             Login
-//             <FaRegUser />
-//           </a>
-
-//           {/* Wishlist */}
-//           <a
-//             href="#"
-//             className="hidden sm:flex items-center gap-1 text-sm hover:text-gray-300"
-//           >
-//             Wishlist
-//             <FaRegHeart />
-//           </a>
-
-//           {/* Shopping Cart */}
-//           <a
-//             href="#"
-//             className="flex items-center hover:text-gray-300"
-//           >
-//             <FiShoppingCart />
-//           </a>
-//         </div>
-//       </div>
-//     </header>
-//   );
-// };
-
-// export default Header;
